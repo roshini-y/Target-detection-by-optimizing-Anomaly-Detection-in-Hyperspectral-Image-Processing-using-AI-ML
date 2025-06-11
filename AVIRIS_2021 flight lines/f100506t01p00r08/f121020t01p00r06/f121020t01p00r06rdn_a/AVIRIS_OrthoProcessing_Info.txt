@@ -1,0 +1,75 @@
+NEW AVIRIS ORTHOCORRECTION PROCESSING AND PRODUCTS
+Last Modified 070214, J. W. Boardman
+Questions/Comments, contact Sarah.R.Lundeen@jpl.nasa.gov
+
+A new production orthocorrection system has been implemented for AVIRIS data.
+Here we briefly describe the new system, its products and detail how they
+differ from previous AVIRIS geocorrection files.
+
+The new system uses the same IGM, GLT lookup-table methodology for data
+rendering, but employs a full three-dimensional ray tracing and a 30m spatial
+resolution digital elevation model for complete orthorectification.  Each pixel
+in the imagery is individually ray traced using the best-estimate of sensor
+location and attitude until it intersects the digital elevation model.  The
+spatial fidelity of the data should be much improved, especially in areas of
+rugged and variable across-track terrain.  The previous geocorrection code only
+applied a single ground elevation for each scan line of data and those
+elevations were determined from interpolation of the very coarse GTOPO30
+digital elevation model.  The new ortho code does a full 3-d ray tracing for
+each pixel and uses the USGS NED 1 arc second (roughly 30m) digital elevation
+data.
+
+While we expect the data to be improved over previous versions of AVIRIS
+geocorrection, we do not expect the production data to be accurate or precise
+at the subpixel level.  Time and sensor specific angular and spatial offsets
+and biases affect the solution.  We have used data from multiple flight lines
+in April 2006 to solve for average values for these sensor-to-body parameters.
+While the solution showed these parameters to be mostly stable, so the mean is
+a good substitute, there was some variation from line to line.  As such, fine
+tuning of the ortho model on a line by line basis is still suggested if one
+requires subpixel accuracy and precision.  But such line-specific processing,
+using ground control points from outside data sources, is well beyond the scope
+of the AVIRIS production facility.
+
+The new IGM file (*_ort_igm) is changed in two ways from the previous IGM
+files.  First, the new file has three bands, instead of two.  The third band is
+the elevation of the ray tracing intersection, our estimate for the ground
+elevation at each pixel center.  This third band can be passed through the
+ortho GLT (*_ort_glt) to build a map-correct digital elevation model for
+draping and/or modeling of the AVIRIS spectral data.  The second change to the
+IGM files is the projection system used for the x/y map data in the first two
+bands.  Previous versions of the orthocorrection code reported pixel center map
+locations in UTM WGS-84 coordinates in the first two bands.  The new code uses
+WGS-84 longitude and latitude instead of UTM x-y values.  Band 1 of the
+*_ort_igm is WGS-84 longitude and band 2 is WGS-84 latitude (both in decimal
+degrees).
+
+In addition to the orthocorrection upgrade there is a wholly new data set
+(*_obs and *_obs_ort) that contains pertinent parameters relating to the
+geometry of the observation and illumination conditions.  The two versions of
+this file are before and after GLT-application.  The file *_obs is in the raw
+spatial format and matches the uncorrected AVIRIS data.  The *_obs_ort file has
+been rendered using the *_ort_glt lookup table and matches the orthocorrected
+imagery.  This observation parameter file has ten bands.  The ten bands, in
+order, are: path length (sensor-to-ground in meters); to-sensor-azimuth (0 to
+360 degrees cw from N); to-sensor-zenith (0 to 90 degrees from zenith); to-sun-
+azimuth; to-sun-zenith; phase (degrees between to-sensor and to-sun vectors in
+principal plane); slope (local surface slope as derived from DEM in degrees);
+aspect (local surface aspect 0 to 360 degrees cw from N); cosine i (apparent
+local illumination factor based on DEM slope and aspect and to-sun vector, -1
+to 1) and UTC time (decimal hours for mid-line pixels).  We encourage anyone
+using these auxiliary parameters, especially for science-critical applications,
+to verify them against other models and sources as this is a new implementation
+and an experimental data set.
+
+One additional change in the data delivery is the creation of two separate
+ephemeris files.  As before, these are binary files with 6 values stored in
+double precision float (Intel byte order) for each AVIRIS scan line.  The six
+values store the attitude (roll, pitch and heading) and position (x,y,z) for
+the sensor at the mid-point in each scan line.  The file *_eph has the position
+data in a WGS-84/NAD83 UTM x,y,z coordinate system.  The file *_lonlat_eph
+stores position in WGS-84 longitude, latitude and elevation.  Both ephemeris
+files have the raw GPS ellipsoidal elevation converted to orthometric
+elevations via use of the NGA EGM96 global geoid model.
+
+
