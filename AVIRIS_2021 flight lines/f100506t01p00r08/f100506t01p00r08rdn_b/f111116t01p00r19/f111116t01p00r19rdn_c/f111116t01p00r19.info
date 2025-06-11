@@ -1,0 +1,42 @@
+***  Enter for every run:
+
+site_name      = San Diego 3 (28K) 
+location       = CA
+
+investigator   = Fred Kruse
+
+pilot_st_lat   = 32.7972
+pilot_end_lat  = 32.656
+
+pilot_st_long  = -117.1374
+pilot_end_long = -117.1376
+
+pilot_st_date  = 111116
+pilot_end_date = 111116
+pilot_st_time  = 20 19 00
+pilot_end_time = 20 24 00
+
+type           = 1
+
+pilot_comments = 
+
+proc_comments  =
+
+***  Enter once per flight tape:
+
+ARC_flight_id   = 
+NASA_log       = 112030
+
+pilot          = Tom Ryan
+aircraft_id    = ER-2 806
+
+takeoff_date   = 111116
+landing_date   = 111116
+takeoff_time   = 16 50 00
+landing_time   = 0 00 00
+
+deploymt_site  = DAOF
+
+***  Enter N below if OBC correction should NOT be performed:
+
+OBC_performed  =
